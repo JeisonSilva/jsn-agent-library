@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/jsn.agent.library.domain/jsn.agent.library.domain.csproj" />
+    <Project Path="src/jsn.agent.library.infra/jsn.agent.library.infra.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/jsn.agent.library.domain.tests/jsn.agent.library.domain.tests.csproj" />
+  </Folder>
+</Solution>
