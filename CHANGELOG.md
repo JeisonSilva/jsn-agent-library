@@ -14,3 +14,7 @@ Todas as mudanças relevantes deste projeto ficam aqui. O formato segue o
 - Biblioteca `jsn.agent.library.infra` (`net10.0`), que referencia o domain.
 - Projeto de testes xUnit `jsn.agent.library.domain.tests` (`net10.0`), que referencia só o domain.
 - `.gitignore` padrão do .NET.
+
+### Alterado
+
+- README com a descrição, a estrutura do projeto e como compilar e testar.
