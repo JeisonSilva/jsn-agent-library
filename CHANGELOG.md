@@ -14,6 +14,8 @@ Todas as mudanças relevantes deste projeto ficam aqui. O formato segue o
 - Biblioteca `jsn.agent.library.infra` (`net10.0`), que referencia o domain.
 - Projeto de testes xUnit `jsn.agent.library.domain.tests` (`net10.0`), que referencia só o domain.
 - `.gitignore` padrão do .NET.
+- Classe de testes `AgentCoreTest` no projeto `jsn.agent.library.domain.tests`, ainda sem testes.
+- FluentAssertions 7.2.2 e Moq.AutoMock 4.0.3 no projeto de testes. O FluentAssertions fica na série 7 (Apache-2.0) porque a 8 tem licença comercial.
 
 - Esqueleto do domain em DDD, organizado por funcionalidade de negócio: `Authoring`, `Publishing`, `Retirement`, `Discovery` e `SharedKernel`, com testes xUnit (2026-10-19).
 
