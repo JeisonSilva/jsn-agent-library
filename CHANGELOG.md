@@ -23,6 +23,7 @@ Todas as mudanças relevantes deste projeto ficam aqui. O formato segue o
 
 - README com a descrição, a estrutura do projeto e como compilar e testar.
 - README com a organização do domain.
+- README com o diagrama da estrutura: projetos da solution, blocos do domain e fluxo de execução do agent (2026-10-21).
 
 ### Removido
 

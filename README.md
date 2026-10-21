@@ -26,6 +26,69 @@ O `domain` é organizado por funcionalidade de negócio (DDD), não por tipo té
 
 Os testes seguem as mesmas pastas.
 
+## Diagrama da estrutura
+
+### Projetos da solution
+
+```
+┌─────────────────────────────────┐
+│ jsn.agent.library.domain.tests  │  xUnit · FluentAssertions 7 · Moq.AutoMock
+└───────────────┬─────────────────┘
+                │ referencia
+                ▼
+┌─────────────────────────────────┐        ┌─────────────────────────────────┐
+│    jsn.agent.library.domain     │◄───────│     jsn.agent.library.infra     │
+│  (regras de negócio, sem deps)  │ refer. │  (vazia: ainda sem código)      │
+└─────────────────────────────────┘        └─────────────────────────────────┘
+```
+
+### Domain
+
+O domain tem dois blocos que ainda não se ligam um ao outro: a execução do agent e a definição e o ciclo de vida.
+
+```
+jsn.agent.library.domain
+│
+├── EXECUÇÃO (raiz do projeto)
+│     AgentCore ──Create()──► Agent ──ExecuteAsync()──► AgentResponse
+│        │                      │
+│        └──── usam ────────────┴──► ILlm      (CompleteAsync)
+│                                 └─► ITool    (sem membros)
+│
+└── DEFINIÇÃO / CICLO DE VIDA (DDD, por funcionalidade)
+      ├── Authoring    AgentDefinition (aggregate root)
+      │                  ├─ AgentId · AgentName · Instructions
+      │                  ├─ ModelSpec · Capability · ToolReference
+      │                  ├─ AgentStatus (enum)
+      │                  ├─ IAgentDefinitionRepository
+      │                  └─ evento: AgentDefinitionCreated
+      ├── Publishing   AgentVersion (entity) · SemanticVersion
+      │                  └─ evento: AgentVersionPublished
+      ├── Retirement   evento: AgentDefinitionDeprecated
+      ├── Discovery    AgentSearchSpecification · IAgentCatalog
+      └── SharedKernel Entity · AggregateRoot · ValueObject
+                       IDomainEvent · DomainException
+```
+
+### Fluxo de execução
+
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant Core as AgentCore
+    participant A as Agent
+    participant L as ILlm
+    C->>Core: new AgentCore(llm)
+    C->>Core: WithSystemPrompt(...) / WithTools(...)
+    C->>Core: Create()
+    Core-->>C: Agent
+    C->>A: WithHumanRequest(...)
+    C->>A: ExecuteAsync()
+    A->>L: CompleteAsync(systemPrompt, humanRequest, tools)
+    L-->>A: texto
+    A-->>C: AgentResponse
+```
+
 ## Requisitos
 
 .NET SDK 10. O `global.json` fixa o SDK 10.0.112 e aceita versões mais novas do SDK 10.
