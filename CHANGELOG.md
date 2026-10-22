@@ -17,10 +17,12 @@ Todas as mudanças relevantes deste projeto ficam aqui. O formato segue o
 - Primeiro teste do `AgentCore` (`AgentCoreTest`): cria um agent com system prompt e tools e confere que ele processa a mensagem do usuário e devolve o texto do LLM.
 - Processo de criação do agent no domain: `AgentCore` (criador, com `WithSystemPrompt`, `WithTools` e `Create()`) gera um `Agent`, que recebe o pedido com `WithHumanRequest` e executa com `ExecuteAsync`. Inclui `ILlm`, `ITool` (ainda sem membros) e `AgentResponse`.
 - FluentAssertions 7.2.2 e Moq.AutoMock 4.0.3 no projeto de testes. O FluentAssertions fica na série 7 (Apache-2.0) porque a 8 tem licença comercial.
+- `SystemPrompt`: modelo do system prompt com identidade, objetivo e contexto obrigatórios, e formato da resposta e ambiente opcionais, inspirado na anatomia do prompt do CrewAI (2026-10-21).
 - Esqueleto do domain em DDD, organizado por funcionalidade de negócio: `Authoring`, `Publishing`, `Retirement`, `Discovery` e `SharedKernel`, com testes xUnit (2026-10-19).
 
 ### Alterado
 
+- `AgentCore.WithSystemPrompt` recebe um `SystemPrompt` em vez de texto, e o `Create()` lança `InvalidOperationException` se ele não for informado (2026-10-21).
 - README com a descrição, a estrutura do projeto e como compilar e testar.
 - README com a organização do domain.
 - README com o diagrama de classes do componente agent (2026-10-21).

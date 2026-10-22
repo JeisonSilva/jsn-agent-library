@@ -18,7 +18,8 @@ O `domain` tem só o componente agent. `AgentCore` monta o agent com o system pr
 
 | Tipo | Função |
 | --- | --- |
-| `AgentCore` | Criador do agent: `WithSystemPrompt`, `WithTools` e `Create()` |
+| `AgentCore` | Criador do agent: `WithSystemPrompt`, `WithTools` e `Create()`. Sem system prompt, o `Create()` lança `InvalidOperationException` |
+| `SystemPrompt` | Modelo do system prompt: identidade, objetivo e contexto são obrigatórios; formato da resposta e ambiente são opcionais. `Render()` gera o texto final |
 | `Agent` | Recebe o pedido com `WithHumanRequest` e executa com `ExecuteAsync` |
 | `AgentResponse` | Resultado da execução, com o texto do LLM |
 | `ILlm` | Porta para o modelo de linguagem: `CompleteAsync` |
@@ -29,13 +30,24 @@ O `domain` tem só o componente agent. `AgentCore` monta o agent com o system pr
 ```mermaid
 classDiagram
     class AgentCore {
-        +WithSystemPrompt(string) AgentCore
+        +WithSystemPrompt(SystemPrompt) AgentCore
         +WithTools(IEnumerable~ITool~) AgentCore
         +Create() Agent
     }
     class Agent {
         +WithHumanRequest(string) Agent
         +ExecuteAsync() Task~AgentResponse~
+    }
+    class SystemPrompt {
+        +string Identity
+        +string Purpose
+        +string Context
+        +string? OutputFormat
+        +string? Environment
+        +Create(identity, purpose, context)$ SystemPrompt
+        +WithOutputFormat(string) SystemPrompt
+        +WithEnvironment(string) SystemPrompt
+        +Render() string
     }
     class AgentResponse {
         +string Response
@@ -48,6 +60,7 @@ classDiagram
         <<interface>>
     }
     AgentCore ..> Agent : cria
+    AgentCore --> SystemPrompt
     AgentCore --> ILlm
     AgentCore --> ITool
     Agent --> ILlm

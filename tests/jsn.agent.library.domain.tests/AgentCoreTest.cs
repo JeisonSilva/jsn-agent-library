@@ -13,14 +13,16 @@ public class AgentCoreTest
     public async Task Create_ComSystemPromptETools_DeveGerarUmAgentQueProcessaAMensagemDoUsuario()
     {
         // Arrange
-        const string systemPrompt = "Você é um assistente objetivo.";
+        var systemPrompt = SystemPrompt
+            .Create("Você é um assistente técnico.", "Explicar conceitos de forma objetiva.", "Atende desenvolvedores iniciantes.")
+            .WithOutputFormat("Texto corrido, no máximo três frases.");
         const string humanRequest = "Explique o que é um agent.";
         const string textoProcessado = "Um agent é um programa que age de forma autônoma.";
 
         var tools = new[] { _mocker.GetMock<ITool>().Object };
 
         Expression<Func<ILlm, Task<string>>> processar = x => x.CompleteAsync(
-            systemPrompt,
+            systemPrompt.Render(),
             humanRequest,
             It.Is<IReadOnlyList<ITool>>(t => t.SequenceEqual(tools)));
 
@@ -40,5 +42,18 @@ public class AgentCoreTest
         agent.Should().NotBeNull();
         result.Response.Should().Be(textoProcessado);
         _mocker.Verify(processar, Times.Once);
+    }
+
+    [Fact]
+    public void Create_SemSystemPrompt_DeveLancarExcecao()
+    {
+        // Arrange
+        var core = _mocker.CreateInstance<AgentCore>().WithTools([]);
+
+        // Act
+        var act = () => core.Create();
+
+        // Assert
+        act.Should().Throw<InvalidOperationException>();
     }
 }

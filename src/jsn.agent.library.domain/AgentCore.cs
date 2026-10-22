@@ -3,7 +3,7 @@ namespace jsn.agent.library.domain;
 public sealed class AgentCore
 {
     private readonly ILlm _llm;
-    private string _systemPrompt = string.Empty;
+    private SystemPrompt? _systemPrompt;
     private IReadOnlyList<ITool> _tools = [];
 
     public AgentCore(ILlm llm)
@@ -11,8 +11,9 @@ public sealed class AgentCore
         _llm = llm;
     }
 
-    public AgentCore WithSystemPrompt(string systemPrompt)
+    public AgentCore WithSystemPrompt(SystemPrompt systemPrompt)
     {
+        ArgumentNullException.ThrowIfNull(systemPrompt);
         _systemPrompt = systemPrompt;
         return this;
     }
@@ -23,5 +24,11 @@ public sealed class AgentCore
         return this;
     }
 
-    public Agent Create() => new(_llm, _systemPrompt, _tools);
+    public Agent Create()
+    {
+        if (_systemPrompt is null)
+            throw new InvalidOperationException("O agent só pode ser criado com um system prompt. Use WithSystemPrompt.");
+
+        return new Agent(_llm, _systemPrompt.Render(), _tools);
+    }
 }
